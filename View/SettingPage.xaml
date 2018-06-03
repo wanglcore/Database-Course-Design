@@ -1,0 +1,29 @@
+﻿<Page
+    x:Class="APP.View.SettingPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:APP.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Frame>
+        <Grid>
+            <StackPanel Orientation="Vertical">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+                    <Button Grid.Row="0" x:Name="AccountandSecure" Content="账号和安全" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="AccountandSecure_Click" />
+                    <Button Grid.Row="1" x:Name="Logoutbutton" Content="退出账号" Foreground="Red" Click="Logoutbutton_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+
+                </Grid>
+
+            </StackPanel>
+        </Grid>
+    </Frame>
+
+</Page>

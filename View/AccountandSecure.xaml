@@ -1,0 +1,22 @@
+﻿<Page
+    x:Class="APP.View.AccountandSecure"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:APP.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Width="250">
+        <TextBlock Text="修改密码" />
+        <PasswordBox x:Name="InitialPasswd" PlaceholderText="原密码">
+
+        </PasswordBox>
+        <PasswordBox x:Name="NewPasswd" PlaceholderText="新密码">
+        </PasswordBox>
+        <Button x:Name="Modify" Content="修改" Click="Modify_Click" HorizontalAlignment="Stretch">
+
+        </Button>
+    </StackPanel>
+</Page>
