@@ -10,15 +10,20 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="8*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TextBox x:Name="MyAnswer" Grid.Row="0" TextWrapping="Wrap" AcceptsReturn="True">
+        <AppBarButton Icon="Cancel" x:Name="Cancel" Click="Cancel_Click" HorizontalAlignment="Right" Grid.Row="0"/>
+        <TextBox  x:Name="MyAnswer" Grid.Row="1" TextWrapping="Wrap" AcceptsReturn="True" PlaceholderText="回答">
         </TextBox>
-        <StackPanel Grid.Row="1">
-            <TextBlock x:Name="issucc" VerticalAlignment="Stretch" FontSize="20" />
-            <Button x:Name="SubAnswer" FontSize="20" HorizontalAlignment="Right" Content="提交回答" VerticalAlignment="Stretch" Click="SubAnswer_Click" />
-        </StackPanel>
+        
+        <CommandBar Grid.Row="2">
+           
+            <AppBarButton Icon="Save" Label="保存" x:Name="SaveAnswer" Click="SaveAnswer_Click" />
+            <AppBarButton Icon="Accept" Label="提交答案" x:Name="SubAnswer" Click="SubAnswer_Click" />
+            <AppBarButton Icon="Cancel" Label="取消" x:Name="CancelAnswer" Click="CancelAnswer_Click" />
+        </CommandBar>
     </Grid>
 
 </Page>

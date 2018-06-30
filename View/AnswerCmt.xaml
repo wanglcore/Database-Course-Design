@@ -1,0 +1,66 @@
+﻿<Page x:Class="APP.View.AnswerCmt" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:APP.View" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" xmlns:data="using:APP.Model" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <AppBarButton Icon="Cancel" HorizontalAlignment="Right" Click="CancelCmtButton_Click" Grid.Row="0"/>
+        <ListView ItemsSource="{x:Bind commentPlus,Mode=OneWay}" Grid.Row="1" IsItemClickEnabled="True" x:Name="CmtList" ItemClick="CmtList_ItemClick" x:FieldModifier="Public" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollMode="Auto">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="data:Comment">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{x:Bind CmdUserid,Mode=OneWay}" Visibility="Collapsed" x:Name="CmtUseridBlock"/>
+                            <TextBlock Text="{x:Bind UseridName,Mode=OneWay}" Visibility="Collapsed" x:Name="CmtUseridNameBlock"/>
+                            <TextBlock Text="{x:Bind CmtedUserid,Mode=OneWay}" Visibility="Collapsed" x:Name="CmtedUseridBlock"/>
+                            <Button Content="{x:Bind CmdUseridName,Mode=OneWay}" Grid.Column="0" x:Name="CmdName" Background="LightBlue" Click="CmdName_Click" Tag="{x:Bind CmdUserid}"/>
+                            <Button Content="{x:Bind CmtedUseridName,Mode=OneWay}" Grid.Column="1" x:Name="CmtedName" Background="LightBlue" Click="CmtedName_Click" Tag="{x:Bind CmtedUserid}"/>
+                            <TextBlock Text="{x:Bind CmtTime,Mode=OneWay}" Grid.Column="2" x:Name="CmtTime"/>
+                        </Grid>
+                        <TextBlock Text="{x:Bind CmtContent,Mode=OneWay}" MaxLines="3" Grid.Row="1" x:Name="CmtContentone" TextWrapping="Wrap"/>
+                        <TextBlock Text="{x:Bind CmtContent,Mode=OneWay}" Visibility="Collapsed" x:Name="CmtContenttwo" Grid.Row="1" TextWrapping="Wrap"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="2">
+                            <AppBarButton Icon="Like" Label="{x:Bind UpCmtnum,Mode=OneWay}" x:Name="LikeButton" Click="LikeButton_Click" />
+                            <AppBarButton Icon="Dislike" Label="{x:Bind DownCmtnum,Mode=OneWay}" x:Name="DislikeButton" Click="DislikeButton_Click"/>
+                            <AppBarButton Icon="Add" Label="回复" x:Name="AddtoButton" Click="AddtoButton_Click" />
+                        </StackPanel>
+                        <Grid Grid.Row="3" Visibility="Collapsed" x:Name="AddCmdGrid" x:FieldModifier="Public">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBox x:Name="Commentadd" Grid.Row="0" PlaceholderText="评论" TextWrapping="Wrap"/>
+                            <CommandBar Grid.Row="1">
+                                <AppBarButton Icon="Accept" Label="确认" x:Name="CAcceptButton" Click="CAcceptButton_Click"/>
+                                <AppBarButton Icon="Cancel" Label="取消" x:Name="CCancelButton" Click="CCancelButton_Click"/>
+                            </CommandBar>
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Grid Grid.Row="2" x:Name="CmtGrid">
+            <StackPanel Orientation="Vertical">
+                <TextBox PlaceholderText="添加评论" x:Name="AddCmtBox" Visibility="Collapsed"></TextBox>
+                <CommandBar>
+                    <AppBarButton Icon="Accept" Label="确认" Visibility="Collapsed" x:Name="AcceptButton" Click="AcceptButton_Click"/>
+                    <AppBarButton Icon="Cancel" Label="取消" Visibility="Collapsed" x:Name="CancleButton" Click="CancleButton_Click"/>
+                    <AppBarButton Icon="Add" Label="添加评论" x:Name="AddButton" Click="AddButton_Click"/>
+                </CommandBar>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>

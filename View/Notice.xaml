@@ -1,0 +1,83 @@
+﻿<Page
+    x:Class="APP.View.Notice"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:APP.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:data="using:APP.Model"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <AppBarButton Icon="Cancel" HorizontalAlignment="Right"  Grid.Row="0" x:Name="CancelButton" Click="CancelButton_Click"/>
+        <Pivot x:Name="RootPivot" Grid.Row="1">
+            <PivotItem Header="Artical Comment">
+                <ListView ItemsSource="{x:Bind artComments}" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollMode="Auto" x:Name="Articallist" IsItemClickEnabled="True" ItemClick="Articallist_ItemClick">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="data:ArtComment">
+                            <Grid Margin="5,5,5,5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="{x:Bind ArtCmtTime}" Grid.Row="0" />
+                                <TextBlock Text="{x:Bind ArticalName}" Grid.Row="1" FontWeight="Bold" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                                    <Button Content="{x:Bind CmdUseridName}" Background="LightBlue" Foreground="Blue" Click="CmdUseridName_Click" Tag="{x:Bind ArtCmtUserid}"/>
+                                    <Button Content="{x:Bind CmtedUseridName}" Background="LightBlue" Foreground="Blue" Margin="20,0,0,0" Click="CmdUseridName_Click" Tag="{x:Bind ArtCmtedUserid}"/>
+                                </StackPanel>
+                                <TextBlock Text="{x:Bind ArtCmtContent}" TextWrapping="Wrap" IsTextSelectionEnabled="True" Grid.Row="3" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView >
+            </PivotItem>
+            <PivotItem Header="Answer Comment">
+                <ListView ItemsSource="{x:Bind comments}" ScrollViewer.VerticalScrollMode="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" x:Name="Answerlist" IsItemClickEnabled="True" ItemClick="Answerlist_ItemClick">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="data:Comment">
+                            <Grid Margin="5,5,5,5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="{x:Bind CmtTime}" Grid.Row="0" />
+                                <TextBlock Text="{x:Bind QusitionName}" Grid.Row="1" FontWeight="Bold" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                                    <Button Content="{x:Bind CmdUseridName}" Background="LightBlue" Foreground="Blue" x:Name="CmdUseridName" Click="CmdUseridName_Click" Tag="{x:Bind CmdUserid}"/>
+                                    <Button Content="{x:Bind CmtedUseridName}" Background="LightBlue" Foreground="Blue" Margin="20,0,0,0" x:Name="CmtedUseridName" Click="CmdUseridName_Click" Tag="{x:Bind CmtedUserid}"/>
+                                </StackPanel>
+                                <TextBlock Text="{x:Bind CmtContent}" TextWrapping="Wrap" IsTextSelectionEnabled="True" Grid.Row="3" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </PivotItem>
+        </Pivot>
+    </Grid>
+</Page>

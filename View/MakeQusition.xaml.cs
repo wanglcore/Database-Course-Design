@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -9,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -27,9 +29,12 @@ namespace APP.View
     public sealed partial class MakeQusition : Page
     {
         MyStruct myStruct;
+        string QusitionTitle=string.Empty;
+        string QusitiondETAILE=string.Empty;
+        ObservableCollection<Model.Label> labels=new ObservableCollection<Model.Label>();
         public MakeQusition()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         /// <summary>
@@ -39,15 +44,24 @@ namespace APP.View
         /// <param name="e"></param>
         private void SelectLabels_Click(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(SelectLabels));
-
+            QusitionTitle = QusitionDescribe.Text;
+            QusitiondETAILE = Qusitiondetail.Text;
+            Frame.Navigate(typeof(SelectLabels),0);
         }
-
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            myStruct = (MyStruct)e.Parameter;
-
+            if (e.Parameter is MyStruct)
+            {
+                myStruct = (MyStruct)e.Parameter;
+            }
+            else if(e.Parameter is ObservableCollection<Model.Label>)
+            {
+                labels = (ObservableCollection<Model.Label>)e.Parameter;
+                labelview.ItemsSource = labels;
+            }
+            QusitionDescribe.Text = QusitionTitle;
+            Qusitiondetail.Text = QusitiondETAILE;
         }
         /// <summary>
         /// 提交提问
@@ -56,20 +70,63 @@ namespace APP.View
         /// <param name="e"></param>
         private async void Submit_Click(object sender, RoutedEventArgs e)
         {
-            Model.Qusition qusition = new Model.Qusition
+            if (Qusitiondetail.Text == "")
             {
-                Askerid = myStruct.id,
-                AskTime = DateTime.Now,
-                UpAskTime = DateTime.Now,
-                QusitionTitle = QusitionDescribe.Text,
-                QusitionContent = Qusitiondetail.Text,
-                Qlabel0 = "Math",
-                Qlabel1 = "d",
-                QLabel2 = "c"
-            };
-            await SubQusition(qusition);
+                Qusitiondetail.PlaceholderText = "没输入内容";
+                Qusitiondetail.PlaceholderForeground = new SolidColorBrush(Colors.Red);
+            }
+            else if (QusitionDescribe.Text == "")
+            {
+                QusitionDescribe.PlaceholderForeground = new SolidColorBrush(Colors.Red);
+                QusitionDescribe.PlaceholderText = "没输入内容";
+            }
+            else if (labels.Count == 0)
+            {
+                await ContentD();
+            }
+            if (QusitionDescribe.Text != "" && Qusitiondetail.Text != "" && labels.Count >= 1)
+            {
+                Model.Qusition qusition = new Model.Qusition
+                {
+                    Askerid = myStruct.id,
+                    AskTime = DateTime.Now,
+                    UpAskTime = DateTime.Now,
+                    QusitionTitle = QusitionDescribe.Text,
+                    QusitionContent = Qusitiondetail.Text,
+                    Qlabel0 = labels[0].Labelname,
+
+                };
+                if (labels.Count == 1)
+                {
+                    qusition.Qlabel1 = "";
+                    qusition.QLabel2 = "";
+                }
+                if (labels.Count == 2)
+                {
+                    qusition.Qlabel1 = labels[1].Labelname;
+                    qusition.QLabel2 = "";
+                }
+                if (labels.Count == 3)
+                {
+                    qusition.Qlabel1 = labels[1].Labelname;
+                    qusition.QLabel2 = labels[2].Labelname;
+                }
+                await SubQusition(qusition);
+            }
         }
-        public async Task SubQusition(Model.Qusition qusition)
+
+        private async Task ContentD()
+        {
+            ContentDialog contentDialog = new ContentDialog();
+            contentDialog.Title = "你没有选择文章的标签,请选择";
+            contentDialog.PrimaryButtonText = "去选择";
+            contentDialog.PrimaryButtonClick += (_s, _e) =>
+            {
+                this.Frame.Navigate(typeof(SelectLabels), 0);
+            };
+            await contentDialog.ShowAsync();
+        }
+        private async Task SubQusition(Model.Qusition qusition)
         {
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Clear();
@@ -79,11 +136,15 @@ namespace APP.View
             var res = await response.Content.ReadAsAsync<bool>();
             if (res == true)
             {
-                issucc.Text = "Success";
+                AcceptButton.IsEnabled = false;
             }
-            else
+        }
+
+        private void CancelFButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (Frame.CanGoBack)
             {
-                issucc.Text = "Failure";
+                Frame.GoBack();
             }
         }
     }

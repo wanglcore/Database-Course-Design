@@ -1,0 +1,25 @@
+﻿<Page x:Class="APP.View.LabelDetail" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:data="using:APP.Model" xmlns:local="using:APP.View" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <StackPanel Margin="2,2,2,2">
+        <StackPanel Orientation="Vertical">
+            <TextBlock x:Name="Labelname" Text="{x:Bind label.Labelname,Mode=OneWay}" FontWeight="Bold" />
+            <TextBlock x:Name="Labelbrief" Text="{x:Bind label.LabelBrief,Mode=OneWay}" Margin="5,5,5,5"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <AppBarButton Icon="Clock" x:Name="ClockIcon" Label="{x:Bind label.LabelCTime,Mode=OneWay}" />
+                <AppBarButton Icon="Message" x:Name="MessageIcon" Label="{x:Bind label.LabelQnum,Mode=OneWay}" />
+                <AppBarButton Icon="Add" x:Name="AddnumIcon" Label="{x:Bind label.LabelUnum,Mode=OneWay}" />
+                <AppBarButton Icon="Add" x:Name="AddFollow" Click="AddFollow_Click" />
+            </StackPanel>
+        </StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button x:Name="HaveAnswerButton" Grid.Column="0" Content="已回答" HorizontalAlignment="Stretch" Click="HaveAnswerButton_Click" Background="Transparent" />
+            <Button x:Name="UnanswerButton" Grid.Column="1" Content="未回答" HorizontalAlignment="Stretch" Click="UnanswerButton_Click" Background="Transparent"/>
+            <Button x:Name="FollowedpeopleButton" Grid.Column="2" Content="关注的人" HorizontalAlignment="Stretch" Click="FollowedpeopleButton_Click" Background="Transparent"/>
+        </Grid>
+        <Frame x:Name="ContentFrame" x:FieldModifier="Public"/>
+    </StackPanel>
+</Page>

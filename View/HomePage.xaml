@@ -1,40 +1,16 @@
-﻿<Page
-    x:Class="APP.View.HomePage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:APP.View"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    xmlns:data="using:APP.Model"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+﻿<Page x:Class="APP.View.HomePage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:APP.View" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:data="using:APP.Model" mc:Ignorable="d" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls">
 
-    <VisualStateManager.VisualStateGroups>
-        <VisualStateGroup CurrentStateChanged="VisualStateGroup_CurrentStateChanged">
-            <VisualState>
-                <VisualState.StateTriggers>
-                    <AdaptiveTrigger MinWindowWidth="720">
-                    </AdaptiveTrigger>
-                </VisualState.StateTriggers>
-            </VisualState>
-            <VisualState>
-                <VisualState.StateTriggers>
-                    <AdaptiveTrigger MinWindowHeight="200">
-                    </AdaptiveTrigger>
-                </VisualState.StateTriggers>
-            </VisualState>
-        </VisualStateGroup>
-    </VisualStateManager.VisualStateGroups>
-    <Frame SizeChanged="HomeFrameView_SizeChanged" x:FieldModifier="Public" x:Name="HomeFrameView">
-        <NavigationView ItemInvoked="Nvall_ItemInvoked" x:Name="nvall" IsPaneOpen="False" CompactPaneLength="45" OpenPaneLength="45">
+
+
+    <Frame x:FieldModifier="Public" x:Name="HomeFrameView" >
+        <NavigationView ItemInvoked="Nvall_ItemInvoked" x:Name="nvall" IsPaneOpen="False" CompactPaneLength="48" OpenPaneLength="130" IsBackButtonVisible="Collapsed" IsPaneToggleButtonVisible="True">
             <NavigationView.MenuItems>
+                <NavigationViewItemHeader />
                 <NavigationViewItem x:Uid="HomeNavItem" Content="Home" Tag="home">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE10F;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItemSeparator />
-                <NavigationViewItemHeader />
                 <NavigationViewItem x:Uid="AppsNavItem" Content="Search" Tag="Search">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE8F1;" />
@@ -46,30 +22,44 @@
                         <FontIcon Glyph="&#xE8D1;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem x:Uid="ArticalNavItem" Content="Artical" Tag="Artical">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8E4;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Uid="Draft" Content="Draft" Tag="Draft" Icon="Edit" />
+                <NavigationViewItem x:Uid="Notice" Content="Notice" Tag="Notice" Icon="Message" />
                 <NavigationViewItem x:Uid="AccountNavItem" Icon="Account" Content="Account" Tag="Account" />
             </NavigationView.MenuItems>
-            <Frame x:Name="HomeFrame" Margin="0,-60,0,0">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="2*" />
-                    </Grid.ColumnDefinitions>
-                    <Frame x:Name="Homesuggestion" Grid.Column="0">
-                        <StackPanel>
-                            <StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="5*" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Button x:Name="SearchButton" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content="搜索问题,话题或者是人" Background="White" Click="SearchButton_Click" BorderBrush="Gray">
-                                    </Button>
-                                    <Button x:Name="refrash" Grid.Column="1" HorizontalAlignment="Stretch" Content="刷新" Click="Refrash_Click">
-                                    </Button>
-                                </Grid>
-                            </StackPanel>
-                            <Frame x:Name="Suggestionlist">
-                                <ListView HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Column="0" x:Name="itemListview" ItemClick="ItemListview_ItemClick" IsItemClickEnabled="True" ItemsSource="{x:Bind qusitions}">
+
+            <Grid Margin="0,-60,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <Frame x:Name="Homesuggestion" Grid.Column="0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Frame x:Name="Suggestionlist" Grid.Row="1">
+                            <Grid>
+                                <ListView HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Column="0" x:Name="itemListview" ItemClick="ItemListview_ItemClick" IsItemClickEnabled="True" ItemsSource="{x:Bind qusitions}" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollMode="Auto" SelectionChanged="itemListview_SelectionChanged">
+                                    <ListView.Header>
+                                        <controls:ScrollHeader Mode="QuickReturn">
+                                            <Grid>
+                                                <Grid Grid.Row="0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Button x:Name="SearchButton" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content="搜索问题,话题或者是人" Background="White" Click="SearchButton_Click" BorderThickness="0" Style="{StaticResource ButtonRevealStyle}" />
+                                                    <AppBarButton x:Name="refrash" Grid.Column="1" Icon="Refresh" Click="Refrash_Click" />
+                                                </Grid>
+                                            </Grid>
+                                        </controls:ScrollHeader>
+                                    </ListView.Header>
                                     <ListView.ItemContainerStyle>
                                         <Style TargetType="ListViewItem">
                                             <Setter Property="Margin" Value="0,0,0,0" />
@@ -84,52 +74,45 @@
                                                     <RowDefinition Height="*" />
                                                     <RowDefinition Height="2*" />
                                                     <RowDefinition Height="4*" />
-                                                    <RowDefinition Height="*" />
+                                                    <RowDefinition Height="Auto" />
                                                 </Grid.RowDefinitions>
                                                 <Grid Grid.Row="0">
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="2*" />
+                                                        <ColumnDefinition Width="Auto" />
                                                         <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="2*" />
+                                                        <ColumnDefinition Width="Auto" />
                                                     </Grid.ColumnDefinitions>
-                                                    <TextBlock Grid.Column="1" Text="提问日期" />
-                                                    <TextBlock Grid.Column="2" x:Name="AskTime" Text="{x:Bind AskTime}" />
-                                                    <TextBlock Grid.Column="0" HorizontalAlignment="Stretch" Text="{x:Bind Qlabel0}" />
+                                                    <Button Grid.Column="0" HorizontalAlignment="Stretch" Content="{x:Bind Qlabel0}" x:Name="Label0" Background="LightBlue" Foreground="Blue" Click="Label0_Click" />
+                                                    <TextBlock Grid.Column="1" Text="提问日期" TextAlignment="Right" />
+                                                    <TextBlock Grid.Column="2" x:Name="AskTime" Text="{x:Bind AskTime.Date}" HorizontalAlignment="Right" />
                                                 </Grid>
                                                 <Grid Grid.Row="1">
-                                                    <TextBlock x:Name="QusitionTitle" FontWeight="Bold" FontSize="20" TextWrapping="Wrap" Text="{x:Bind QusitionTitle}" />
+                                                    <TextBlock x:Name="QusitionTitle" FontWeight="Bold" TextWrapping="Wrap" Text="{x:Bind QusitionTitle}" />
                                                 </Grid>
                                                 <Grid Grid.Row="2">
                                                     <TextBlock x:Name="QusitionContent" MaxLines="5" Text="{x:Bind QusitionContent}" TextWrapping="Wrap" />
                                                 </Grid>
                                                 <Grid Grid.Row="3">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock Text="关注" Grid.Column="0" />
-                                                    <TextBlock x:Name="Follownum" Grid.Column="1" Text="{x:Bind Followednum}" />
-                                                    <TextBlock Grid.Column="2" Text="回答" />
-                                                    <TextBlock x:Name="Answernum" Grid.Column="3" Text="{x:Bind Answerednum}" />
-                                                    <TextBlock HorizontalAlignment="Stretch" />
-                                                    <Button Grid.Column="5" x:Name="More" FontSize="10" Content="read more" Background="White" Click="More_Click">
-                                                    </Button>
+
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <AppBarButton Icon="Add" Label="{x:Bind Followednum}" />
+                                                        <AppBarButton Icon="Highlight" Label="{x:Bind Answerednum}" />
+                                                    </StackPanel>
+
                                                 </Grid>
                                             </Grid>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
                                 </ListView>
-                            </Frame>
-                        </StackPanel>
-                    </Frame>
-                    <Frame x:Name="ContentViewFrame" x:FieldModifier="Public" Grid.Column="1">
-                    </Frame>
-                </Grid>
-            </Frame>
+                            </Grid>
+                        </Frame>
+
+                    </Grid>
+                </Frame>
+                <Frame x:Name="ContentViewFrame" x:FieldModifier="Public" Grid.Column="1">
+                </Frame>
+            </Grid>
+
         </NavigationView>
     </Frame>
 </Page>

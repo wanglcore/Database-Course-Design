@@ -1,8 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace APP.Model
 {
-    public class GetUserFollow
+    public class GetUserFollow:INotifyPropertyChanged
     {
         public int Qusitonid { get; set; }
         public int Askerid { get; set; }
@@ -16,5 +18,11 @@ namespace APP.Model
         public string Qlabel1 { get; set; }
         public string Qlabel2 { get; set; }
         public DateTime FollowQTime { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void NotifyPropertyChanged([CallerMemberName]String propertyName = "")
+
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

@@ -1,21 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using APP.Model;
+using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -36,33 +27,44 @@ namespace APP.View
             {
                 if (Namebox.Text == "")
                 {
+                   
                     Nameerror.Text = "名字不能为空";
                     Nameerror.Visibility = Visibility.Visible;
                 }
                 if (Emailbox.Text == "")
                 {
+                   
                     Emailerror.Text = "电子邮件不能为空";
                     Emailerror.Visibility = Visibility.Visible;
                 }
                 if (passwdbox.Password == "")
                 {
+                  
                     Passwderror.Text = "密码不能为空";
                     Passwderror.Visibility = Visibility.Visible;
                 }
             }
             else
             {
+                MD5 mD5 = MD5.Create();
+                byte[] inputbyte = System.Text.Encoding.UTF8.GetBytes(passwdbox.Password);
+                byte[] hashpasswd = mD5.ComputeHash(inputbyte);
+                StringBuilder stringBuilder = new StringBuilder();
+                for (int i = 0; i < hashpasswd.Length; i++)
+                {
+                    stringBuilder.Append(hashpasswd[i].ToString("X2"));
+                }
                 string Email = Emailbox.Text;
-                string Passwd = passwdbox.Password;
-                string Nmae = Namebox.Text;
+                string Passwd = stringBuilder.ToString();
+                string Name  = Namebox.Text;
                 await RegisUser(Email, Name, Passwd);
             }
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            Frame frame = Window.Current.Content as Frame;
-            frame.Navigate(typeof(MainPage));
+           
+            Frame.Navigate(typeof(MainPage));
         }
         public async Task RegisUser(string Email, string Name, string Passwd)
         {
@@ -70,14 +72,14 @@ namespace APP.View
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-            var values = new Dictionary<string, string>
-           {
-               {"Email",Email },
-               { "Name",Name},
-               {"Passwd",Passwd }
-           };
+            People people = new People
+            {
+                Email = Email,
+                Passwd = Passwd,
+                Name = Name,
+            };
 
-            var content = new StringContent(JsonConvert.SerializeObject(values), Encoding.UTF8, "application/json");
+            var content = new StringContent(JsonConvert.SerializeObject(people), Encoding.UTF8, "application/json");
             var response = await httpClient.PostAsync("http://localhost:60671/api/values/newpeople", content);
             var responseString = await response.Content.ReadAsAsync<int>();
             if (responseString == 0)

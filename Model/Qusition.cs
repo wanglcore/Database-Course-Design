@@ -1,8 +1,9 @@
 ﻿using System;
-
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 namespace APP.Model
 {
-    public class Qusition
+    public class Qusition:INotifyPropertyChanged
     {
         public int Qusitionid { get; set; }
         public int Askerid { get; set; }
@@ -15,5 +16,11 @@ namespace APP.Model
         public string Qlabel0 { get; set; }
         public string Qlabel1 { get; set; }
         public string QLabel2 { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void NotifyPropertyChanged([CallerMemberName]String propertyName = "")
+
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

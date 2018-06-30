@@ -1,33 +1,23 @@
-﻿<Page
-    x:Class="APP.View.SearchlistPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:APP.View"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    xmlns:data="using:APP.Model"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+﻿<Page x:Class="APP.View.SearchlistPage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:APP.View" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" xmlns:data="using:APP.Model" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Frame>
-        <StackPanel Orientation="Vertical">
-            <StackPanel>
-                <AutoSuggestBox x:Name="AutoSearch" QueryIcon="Find" PlaceholderText="搜索话题,或人物">
-                </AutoSuggestBox>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" x:Name="Qusition" Content="问题" HorizontalAlignment="Stretch" Click="Qusition_Click" />
-                    <Button Grid.Column="1" x:Name="User" Content="用户" HorizontalAlignment="Stretch" />
-                    <Button Grid.Column="2" x:Name="Label" Content="标签" HorizontalAlignment="Stretch" />
-                    <Button Grid.Column="3" x:Name="Artical" Content="文章" HorizontalAlignment="Stretch" />
-                </Grid>
-            </StackPanel>
-            <ListView x:Name="Searchlist" ItemClick="Searchlist_ItemClick" IsItemClickEnabled="True" ItemsSource="{x:Bind qusitions}">
+    <Grid SizeChanged="Grid_SizeChanged">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <AutoSuggestBox x:Name="AutoSearch" QueryIcon="Find" PlaceholderText="搜索话题,或人物" Grid.Row="0" TextChanged="AutoSearch_TextChanged" x:FieldModifier="Public"/>
+        <Frame x:FieldModifier="Public" x:Name="Searchlistframe" Grid.Row="2" Visibility="Collapsed">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+            <HyperlinkButton x:Name="Readqusition" HorizontalAlignment="Right" Grid.Row="0" Content="更多" Click="Readqusition_Click"/>
+            <ListView x:Name="Searchlist" ItemClick="Searchlist_ItemClick" IsItemClickEnabled="True" ItemsSource="{x:Bind qusitions,Mode=OneWay}" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollMode="Auto" Grid.Row="1">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="Margin" Value="0,0,0,0" />
@@ -39,48 +29,139 @@
                     <DataTemplate x:Name="QusitionTem" x:DataType="data:Qusition">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="2*" />
-                                <RowDefinition Height="4*" />
-                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Grid Grid.Row="0">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="1" Text="提问日期" />
-                                <TextBlock Grid.Column="2" x:Name="AskTime" Text="{x:Bind AskTime}" />
-                                <TextBlock Grid.Column="0" HorizontalAlignment="Stretch" Text="{x:Bind Qlabel0}" />
+                                <TextBlock Grid.Column="1" Text="提问日期" HorizontalAlignment="Right" />
+                                <TextBlock Grid.Column="2" x:Name="AskTime" Text="{x:Bind AskTime,Mode=OneWay}" />
+                                <Button Grid.Column="0" HorizontalAlignment="Stretch" Content="{x:Bind Qlabel0,Mode=OneWay}" x:Name="Label0" Click="Label0_Click" Background="LightBlue" Foreground="Blue" />
                             </Grid>
                             <Grid Grid.Row="1">
-                                <TextBlock x:Name="QusitionTitle" FontWeight="Bold" FontSize="20" Text="{x:Bind QusitionTitle}" />
+                                <TextBlock x:Name="QusitionTitle" FontWeight="Bold" FontSize="20" Text="{x:Bind QusitionTitle,Mode=OneWay}" TextWrapping="Wrap"/>
                             </Grid>
                             <Grid Grid.Row="2">
-                                <TextBlock x:Name="QusitionContent" MaxLines="5" Text="{x:Bind QusitionContent}" TextWrapping="Wrap" />
+                                <TextBlock x:Name="QusitionContent" MaxLines="5" Text="{x:Bind QusitionContent,Mode=OneWay}" TextWrapping="Wrap" />
                             </Grid>
                             <Grid Grid.Row="3">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="关注" Grid.Column="0" />
-                                <TextBlock x:Name="Follownum" Grid.Column="1" Text="{x:Bind Followednum}" />
-                                <TextBlock Grid.Column="2" Text="回答" />
-                                <TextBlock x:Name="Answernum" Grid.Column="3" Text="{x:Bind Answerednum}" />
-                                <TextBlock HorizontalAlignment="Stretch" />
-                                <Button Grid.Column="5" x:Name="More" FontSize="10" Content="read more" Background="White">
-                                </Button>
+                                <StackPanel Orientation="Horizontal">
+                                    <AppBarButton Icon="Add" Label="{x:Bind Followednum,Mode=OneWay}" />
+                                    <AppBarButton Icon="Highlight" Label="{x:Bind Answerednum,Mode=OneWay}" />
+                                </StackPanel>
                             </Grid>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-        </StackPanel>
-    </Frame>
+                
+            </Grid>
+        </Frame>
+        <Frame x:Name="Articallistframe" Grid.Row="3" Visibility="Collapsed">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <HyperlinkButton x:Name="ReadArtical" HorizontalAlignment="Right" Grid.Row="0" Content="更多" Click="ReadArtical_Click"/>
+                <ListView x:Name="ArticalList" ItemsSource="{x:Bind articals,Mode=OneWay}" IsItemClickEnabled="True" ItemClick="ArticalList_ItemClick" x:FieldModifier="Public" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollMode="Auto">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                        <Setter Property="VerticalAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="data:Artical">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Content="{x:Bind UseridName,Mode=OneWay}" Grid.Column="0" Background="LightBlue" />
+                                    <Button Content="{x:Bind Label0,Mode=OneWay}" Background="LightBlue" Foreground="Blue" x:Name="Label0" Click="Label0_Click" Grid.Column="2" />
+                                </Grid>
+                            </StackPanel>
+                            <TextBlock Text="{x:Bind ArticalTitle,Mode=OneWay}" Grid.Row="1" TextWrapping="Wrap"/>
+                            <TextBlock Text="{x:Bind ArticalContent,Mode=OneWay}" x:Name="ContentBlock" TextWrapping="Wrap" Grid.Row="2" />
+                            <StackPanel Grid.Row="3" Orientation="Horizontal">
+                                <AppBarButton Icon="Like" />
+                                <AppBarButton Icon="Dislike" />
+                                <AppBarButton Icon="Comment" />
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            </Grid>
+        </Frame>
+        <Frame x:Name="Peoplelistframe" Grid.Row="4" Visibility="Collapsed">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <HyperlinkButton x:Name="ReadmorePeople" HorizontalAlignment="Right" Grid.Row="0" Content="更多" Click="ReadmorePeople_Click"/>
+                <ListView ItemsSource="{x:Bind peoples,Mode=OneWay}" x:Name="Peoplelist" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollMode="Auto" Grid.Row="1" ItemClick="Peoplelist_ItemClick" IsItemClickEnabled="True">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="data:People">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="UserName" Grid.Column="0" Text="{x:Bind Name,Mode=OneWay}" />
+                            <!--<AppBarButton Icon="Accept" Label="关注" Grid.Column="1" />-->
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            </Grid>
+        </Frame>
+        <Frame x:Name="Labellistframe" Grid.Row="5" Visibility="Collapsed">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <HyperlinkButton x:Name="ReadLabel" HorizontalAlignment="Right" Grid.Row="0" Content="更多" Click="ReadLabel_Click"/>
+                <ListView x:Name="Labellist" ItemClick="Labellist_ItemClick" IsItemClickEnabled="True" ItemsSource="{x:Bind labels,Mode=OneWay}" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollMode="Auto"  x:FieldModifier="Public" Grid.Row="1">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Margin" Value="0,0,0,0" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="data:Label">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="labelnameHB" Grid.Column="0" Text="{x:Bind Labelname,Mode=OneWay}" HorizontalAlignment="Stretch" />
+                            <!--<Button x:Name="followlabelbutton" Grid.Column="1" Click="Selectitem_Click" Content="关注" Tag="{x:Bind Labelid,Mode=OneWay}" Background="Transparent" IsEnabled="False"/>-->
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            </Grid>
+        </Frame>
+    </Grid>
 </Page>

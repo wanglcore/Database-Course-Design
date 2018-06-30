@@ -1,0 +1,41 @@
+﻿<Page
+    x:Class="APP.View.LabelDetailP"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:APP.View"
+    xmlns:data="using:APP.Model"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <AppBarButton Icon="Cancel" x:Name="CancelButton" Click="CancelButton_Click" Grid.Row="0" />
+        <ListView x:Name="Followedpeople" ItemsSource="{x:Bind peoples}" ItemClick="Followedpeople_ItemClick" IsItemClickEnabled="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollMode="Auto" Grid.Row="1">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Margin" Value="0,0,0,0" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="data:People">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{x:Bind Name}" Grid.Column="0" />
+                        <TextBlock Text="{x:Bind UserId}" Visibility="Collapsed" />
+                        <AppBarButton Icon="Cancel" x:Name="CancelFollow" Grid.Column="1" />
+                        <AppBarButton Icon="AddFriend" x:Name="AddFollow" Grid.Column="1" Visibility="Collapsed" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>

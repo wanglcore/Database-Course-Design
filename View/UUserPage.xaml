@@ -1,59 +1,75 @@
-﻿<Page
-    x:Class="APP.View.UUserPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:APP.View"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+﻿<Page x:Class="APP.View.UUserPage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:APP.View" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Frame>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
-            <Grid Height="320" Background="LightGray">
-                <PersonPicture x:Name="Personpictures" ProfilePicture="Assets//StoreLogo.png" HorizontalAlignment="Center" Height="150" Width="150">
+            <AppBarButton Icon="Cancel" x:Name="CancelButton" Click="CancelButton_Click" Grid.Row="0"/>
+            <Grid Height="Auto" Background="White">
+                <PersonPicture x:Name="Personpictures" ProfilePicture="Assets//Square44×44Logo.scale-200.png" HorizontalAlignment="Center" Height="150" Width="150">
                 </PersonPicture>
+                
             </Grid>
+            <AppBarButton Icon="AddFriend" x:Name="AddFriend" HorizontalAlignment="Right" Click="AddFriend_Click"/>
+            <AppBarButton Icon="BlockContact" x:Name="Contact" HorizontalAlignment="Right" Visibility="Collapsed" Click="Contact_Click"/>
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"></RowDefinition>
-                    <RowDefinition Height="50"></RowDefinition>
-                    <RowDefinition Height="50"></RowDefinition>
-                    <RowDefinition Height="50"></RowDefinition>
-                    <RowDefinition Height="50"></RowDefinition>
-                    <RowDefinition Height="50"></RowDefinition>
-                    <RowDefinition Height="50"></RowDefinition>
-                    <RowDefinition Height="50"></RowDefinition>
-                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" Orientation="Horizontal">
-                </StackPanel>
-                <Button Grid.Row="1" x:Name="hisanswer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="WhiteSmoke">
+                <Grid Grid.Row="0" Background="WhiteSmoke">
+                  
+                     
+                        <TextBlock Text="{x:Bind people.Name,Mode=OneWay}"  x:Name="NameBlock" />
+                </Grid>
+                <Grid Grid.Row="1" Background="WhiteSmoke">
+                        <!--<Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>-->
+                        <TextBlock Text="{x:Bind people.Introduction,Mode=OneWay}" x:Name="IntroBlock" />
+                        <!--<AppBarButton Icon="Edit" Grid.Column="1" x:Name="Introedit" Click="Introedit_Click" />-->
+                   
+                   
+                </Grid>
+                <Button Grid.Row="2" x:Name="hisanswer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="WhiteSmoke" Click="Hisanswer_Click" Style="{StaticResource ButtonRevealStyle}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="他的回答" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                        <TextBlock />
-                        <TextBlock Text="100" Margin="50,0,0,0" />
+                        
+                        <TextBlock Text="{x:Bind people.Answernum,Mode=OneWay}" Margin="50,0,0,0" />
                     </StackPanel>
                 </Button>
-                <Button Grid.Row="2" x:Name="hisqusition" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="WhiteSmoke">
+                <Button Grid.Row="3" x:Name="hisqusition" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="WhiteSmoke" Click="Hisqusition_Click" Style="{StaticResource ButtonRevealStyle}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="他的提问" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                        <TextBlock Text="100" Margin="50,0,0,0" />
+                        <TextBlock Text="{x:Bind people.Qusitionnum,Mode=OneWay}" Margin="50,0,0,0" />
                         <TextBlock />
                     </StackPanel>
                 </Button>
-                <Button Grid.Row="3" x:Name="hisartical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="WhiteSmoke">
+                <Button Grid.Row="4" x:Name="hisartical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="WhiteSmoke" Click="Hisartical_Click" Style="{StaticResource ButtonRevealStyle}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="他的文章" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                         <TextBlock />
-                        <TextBlock Text="100" Margin="50,0,0,0" />
+                        <TextBlock Text="{x:Bind people.Publishnum,Mode=OneWay}" Margin="50,0,0,0" />
                     </StackPanel>
                 </Button>
-                <Button Grid.Row="4" x:Name="myconpeople" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="WhiteSmoke">
+                <Button Grid.Row="5" x:Name="hisconpeople" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="WhiteSmoke" Click="Hisconpeople_Click" Style="{StaticResource ButtonRevealStyle}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="关注的人" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                         <TextBlock />
-                        <TextBlock Text="100" Margin="50,0,0,0" />
+                        <TextBlock Text="{x:Bind people.Follownum,Mode=OneWay}" Margin="50,0,0,0" />
+                    </StackPanel>
+                </Button>
+                <Button Grid.Row="6" x:Name="conhispeople" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="WhiteSmoke" Click="Conhispeople_Click" Style="{StaticResource ButtonRevealStyle }">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="关注他的人" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                        <TextBlock />
+                        <TextBlock Text="{x:Bind people.Focusednum,Mode=OneWay}" Margin="50,0,0,0" />
                     </StackPanel>
                 </Button>
             </Grid>

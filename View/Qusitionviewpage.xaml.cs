@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using System.Collections.ObjectModel;
 using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
@@ -35,8 +36,21 @@ namespace APP.View
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            myStruct = (MyStruct)e.Parameter;
-            await GetUserQusition(myStruct);
+            if (e.Parameter is MyStruct)
+            {
+                myStruct = (MyStruct)e.Parameter;
+                await GetUserQusition(myStruct);
+            }
+            else if(e.Parameter is List<Qusition>)
+            {
+                qusitions = (List<Qusition>)e.Parameter;
+            }
+            else if(e.Parameter is Tuple<string, List<Qusition>>tuple)
+            {
+                AutoSuggest.Text = tuple.Item1;
+                qusitions = tuple.Item2;
+                
+            }
         }
         public async Task GetUserQusition(MyStruct myStruct)
         {
@@ -61,16 +75,8 @@ namespace APP.View
         private void ItemListview_ItemClick(object sender, ItemClickEventArgs e)
         {
             var clickeditem = (Qusition)e.ClickedItem;
-            Dictionary<string, string> keyValues = new Dictionary<string, string>
-            {
-                { "QusitionTitle", clickeditem.QusitionTitle },
-                { "QusitionContent", clickeditem.QusitionContent },
-                { "Follownum", clickeditem.Followednum.ToString() },
-                { "Answernum", clickeditem.Answerednum.ToString() },
-                { "Qusitionid", clickeditem.Qusitionid.ToString() },
-                { "Userid", myStruct.id.ToString() }
-            };
-            HomePage.Current.ContentViewFrame.Navigate(typeof(AnswerQusition), keyValues);
+         
+            HomePage.Current.ContentViewFrame.Navigate(typeof(AnswerQusition), clickeditem);
         }
         /// <summary>
         /// 得到listview下的所有子控件
@@ -78,7 +84,7 @@ namespace APP.View
         /// <typeparam name="T"></typeparam>
         /// <param name="dependencyObject"></param>
         /// <returns></returns>
-        public List<T> GetChildObjects<T>(DependencyObject dependencyObject) where T : FrameworkElement
+        private List<T> GetChildObjects<T>(DependencyObject dependencyObject) where T : FrameworkElement
         {
             DependencyObject dependency = null;
             List<T> childlist = new List<T>();
@@ -93,6 +99,45 @@ namespace APP.View
 
             }
             return childlist;
+        }
+
+        private void Label0_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            string labelname = button.Content.ToString();
+            HomePage.Current.ContentViewFrame.Navigate(typeof(LabelDetail), labelname);
+        }
+
+        private async void AutoSuggest_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (sender.Text.Length >= 1)
+            {
+                await GetQusiton(sender.Text);
+            }
+            else
+            {
+                sender.PlaceholderText = "查询问题";
+            }
+        }
+
+        private async Task GetQusiton(string text)
+        {
+            HttpClient httpClient = new HttpClient
+            {
+                BaseAddress = new System.Uri("http://localhost:60671/")
+            };
+            httpClient.DefaultRequestHeaders.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            string sql = $"api/qusition/getbyname/{text}";
+            HttpResponseMessage httpResponseMessage = await httpClient.GetAsync(sql);
+            if (httpResponseMessage.IsSuccessStatusCode)
+            {
+                qusitions = await httpResponseMessage.Content.ReadAsAsync<List<Qusition>>();
+                if (qusitions != null)
+                {
+                    itemListview.ItemsSource = qusitions;
+                }
+            }
         }
     }
 }

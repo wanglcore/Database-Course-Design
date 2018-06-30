@@ -1,40 +1,108 @@
-﻿<Page
-    x:Class="APP.View.AnswerQusition"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:APP.View"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+﻿<Page x:Class="APP.View.AnswerQusition" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:APP.View" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" xmlns:data="using:APP.Model" xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"  NavigationCacheMode="Enabled">
     <Frame x:FieldModifier="Public">
-        <Grid>
+        <Grid Padding="5,2,2,2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" x:FieldModifier="Public">
-                <TextBlock x:Name="TitleBlock" TextWrapping="Wrap" FontSize="25" FontWeight="Bold">
-                </TextBlock>
-                <TextBlock x:Name="ContentBlock" TextWrapping="Wrap" FontSize="20" />
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                    <TextBlock Text="follownum">
-                    </TextBlock>
-                    <TextBlock Margin="5,0,0,0" x:Name="Follownum" FontSize="15" x:FieldModifier="Public">
-                    </TextBlock>
-                    <TextBlock Text="answernum" />
-                    <TextBlock x:Name="Answernum" Margin="5,0,0,0" FontSize="15" x:FieldModifier="Public" />
-                    <Button Margin="20,0,0,0" x:Name="Follow" Content="follow" FontSize="20" Click="Follow_Click" />
-                    <Button Margin="20,0,0,0" x:Name="Answer" Content="answer" FontSize="20" Click="Answer_Click" />
-                    <Button Margin="20,0,0,0" x:Name="UpdateAns" FontSize="20" Visibility="Collapsed" Click="UpdateAns_Click" x:FieldModifier="Public" />
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <AppBarButton Icon="Cancel" x:Name="CancelButton" Click="CancelButton_Click" Grid.Column="1" />
+                <ListView Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollMode="Auto">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal">
+                            </StackPanel>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListViewItem>
+                        <Button Content="{x:Bind qusition.Qlabel0,Mode=OneWay}" Background="LightBlue" Foreground="Blue" x:Name="Label0" Click="Label0_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                    </ListViewItem>
+                    <ListViewItem>
+                        <Button Content="{x:Bind qusition.Qlabel1,Mode=OneWay}" Background="LightBlue" Foreground="Blue" Click="Label0_Click" x:Name="Label1" />
+                    </ListViewItem>
+                    <ListViewItem>
+                        <Button Content="{x:Bind qusition.QLabel2,Mode=OneWay}" Background="LightBlue" Foreground="Blue" Click="Label0_Click" x:Name="Label2" />
+                    </ListViewItem>
+                </ListView>
+            </Grid>
+            <TextBlock TextWrapping="Wrap" Text="{x:Bind qusition.QusitionTitle,Mode=OneWay}" Grid.Row="1" FontWeight="Bold" IsTextSelectionEnabled="True" />
+            <TextBlock TextWrapping="Wrap" Text="{x:Bind qusition.QusitionContent,Mode=OneWay}" Grid.Row="2" IsTextSelectionEnabled="True" />
+            <Grid Grid.Row="3">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <AppBarButton Icon="Clock" Label="{x:Bind qusition.AskTime,Mode=OneWay}" />
+                    <AppBarButton Icon="Add" Label="{x:Bind qusition.Followednum,Mode=OneWay}" x:Name="AddButton" />
+                    <AppBarButton Icon="Edit" Label="{x:Bind qusition.Answerednum,Mode=OneWay}" x:Name="AnswerButton" />
+                    <AppBarButton x:Name="Follow" Icon="Add" Click="Follow_Click" />
+                    <AppBarButton x:Name="Answer" Icon="Edit" Click="Answer_Click" Label="AddAnswer"></AppBarButton>
+                    <AppBarButton Icon="Upload" Label="UpdateAnswer" Visibility="Collapsed" x:Name="UPAnswerButton" Click="UPAnswerButton_Click" x:FieldModifier="Public" />
                 </StackPanel>
-            </StackPanel>
-            <Frame x:Name="CurrentAnswer" Grid.Row="1">
-                <ListView>
+
+            </Grid>
+            <Frame x:Name="CurrentAnswer" Grid.Row="4" x:FieldModifier="Public">
+                <ListView ItemsSource="{x:Bind answers,Mode=OneWay}" x:Name="CurrentAnswerList" ItemClick="CurrentAnswerList_ItemClick" IsItemClickEnabled="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollMode="Auto">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Margin" Value="0,0,0,0" />
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="data:Answershow">
+                            <Grid Margin="5,5,5,5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="3*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Content="{x:Bind Name,Mode=OneWay}" Grid.Column="0" x:Name="NameBlock" Background="LightBlue" Click="NameBlock_Click" Tag="{x:Bind Userid}" />
+                                    <TextBlock Text="{x:Bind Userid,Mode=OneWay}" Visibility="Collapsed" x:Name="UseridBlock" />
+                                    <!--<Button Content="关注" Grid.Column="2" HorizontalAlignment="Right" x:Name="isFollow"/>-->
+                                </Grid>
+                                <TextBlock Text="{x:Bind AnswerContent,Mode=OneWay}" Grid.Row="1" x:Name="ContentBlock" x:FieldModifier="Public" MaxLines="3" TextWrapping="Wrap" />
+                                <Grid Grid.Row="2" x:Name="ContentGrid" Visibility="Collapsed">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Text="{x:Bind AnswerContent,Mode=OneWay}" IsTextSelectionEnabled="True" />
+                                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <AppBarButton Icon="Clock" Label="{x:Bind AnswerTime,Mode=OneWay}" />
+                                        <AppBarButton Icon="Dislike" Label="{x:Bind DownAnsnum,Mode=OneWay}" x:Name="DislikeButton" Click="DislikeButton_Click" Tag="{x:Bind Userid}" Foreground="Black" />
+                                        <AppBarButton Icon="Like" Label="{x:Bind UpAnsnum,Mode=OneWay}" x:Name="LikeButton" Tag="{x:Bind Userid}" Click="LikeButton_Click" />
+                                        <AppBarButton Icon="Comment" Label="{x:Bind AnsCmtnum,Mode=OneWay}" x:Name="CommentButton" Click="CommentButton_Click" Tag="{x:Bind Userid}" />
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
                 </ListView>
             </Frame>
+            <Grid Grid.Row="5" Visibility="Collapsed" x:Name="CommandBarGrid">
+                <StackPanel>
+                    <TextBox PlaceholderText="更新你的答案" x:Name="UPAnsBox" />
+                    <CommandBar>
+                        <AppBarButton Icon="Accept" />
+                        <AppBarButton Icon="Cancel" />
+                    </CommandBar>
+                </StackPanel>
+            </Grid>
         </Grid>
     </Frame>
-
 </Page>

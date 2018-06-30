@@ -1,21 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using System.Net.Http;
-using Newtonsoft.Json;
-using System.Threading.Tasks;
-using System.Text;
 
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -74,8 +63,15 @@ namespace APP.View
                 }
                 else
                 {
-
-                    await FixPasswd(ps1);
+                    MD5 mD5 = MD5.Create();
+                    byte[] inputbyte = System.Text.Encoding.UTF8.GetBytes(secondpasswd.Password);
+                    byte[] hashpasswd = mD5.ComputeHash(inputbyte);
+                    StringBuilder stringBuilder = new StringBuilder();
+                    for (int i = 0; i < hashpasswd.Length; i++)
+                    {
+                        stringBuilder.Append(hashpasswd[i].ToString("X2"));
+                    }
+                    await FixPasswd(stringBuilder.ToString());
 
                 }
             }

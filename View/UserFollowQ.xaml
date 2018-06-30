@@ -8,63 +8,62 @@
     xmlns:data="using:APP.Model" mc:Ignorable="d"
     
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <AppBarButton Icon="Cancel" x:Name="CancelButton" Click="CancelButton_Click" Grid.Row="0"/>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+        </Grid>
 
-    <ListView HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Column="0" x:Name="itemListview" ItemClick="UserFollowQusition_ItemClick" IsItemClickEnabled="True" ItemsSource="{x:Bind getUserFollows}">
-        <ListView.ItemContainerStyle>
-            <Style TargetType="ListViewItem">
-                <Setter Property="Margin" Value="0,0,0,0" />
-                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                <Setter Property="VerticalContentAlignment" Value="Stretch" />
-            </Style>
-        </ListView.ItemContainerStyle>
-        <ListView.ItemTemplate>
-            <DataTemplate x:Name="QusitionTem" x:DataType="data:GetUserFollow">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="2*" />
-                        <RowDefinition Height="4*" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="2*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="1" Text="Asktime" />
-                        <TextBlock Grid.Column="2" x:Name="AskTime" Text="{x:Bind AskTime}" />
-                        <TextBlock Grid.Column="0" HorizontalAlignment="Stretch" Text="{x:Bind Qlabel0}" />
+        <ListView x:Name="Searchlist" ItemClick="Searchlist_ItemClick" Grid.Row="2" IsItemClickEnabled="True" ItemsSource="{x:Bind qusitions}" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollMode="Auto">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Margin" Value="0,0,0,0" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate  x:DataType="data:Qusition">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="4*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="1" Text="关注日期" />
+                            <TextBlock Grid.Column="2" x:Name="AskTime" Text="{x:Bind AskTime}" />
+                            <Button Grid.Column="0" HorizontalAlignment="Stretch" Content="{x:Bind Qlabel0,Mode=OneWay}" x:Name="Label0" Click="Label0_Click" Background="LightBlue" Foreground="Blue" />
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <TextBlock x:Name="QusitionTitle" FontWeight="Bold" FontSize="20" Text="{x:Bind QusitionTitle,Mode=OneWay}" />
+                        </Grid>
+                        <Grid Grid.Row="2">
+                            <TextBlock x:Name="QusitionContent" MaxLines="5" Text="{x:Bind QusitionContent,Mode=OneWay}" TextWrapping="Wrap" />
+                        </Grid>
+                        <Grid Grid.Row="3">
+                            <StackPanel Orientation="Horizontal">
+                                <AppBarButton Icon="Add" Label="{x:Bind Followednum,Mode=OneWay}" IsEnabled="False" />
+                                <AppBarButton Icon="Highlight" Label="{x:Bind Answerednum,Mode=OneWay}" IsEnabled="False" />
+                            </StackPanel>
+                        </Grid>
                     </Grid>
-                    <Grid Grid.Row="1">
-                        <TextBlock x:Name="QusitionTitle" FontWeight="Bold" FontSize="20" Text="{x:Bind QusitionTitle}" />
-                    </Grid>
-                    <Grid Grid.Row="2">
-                        <TextBlock x:Name="QusitionContent" MaxLines="5" Text="{x:Bind QusitionContent}" TextWrapping="Wrap" />
-                    </Grid>
-                    <Grid Grid.Row="3">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="Follownum" Grid.Column="0" />
-                        <TextBlock x:Name="Follownum" Grid.Column="1" Text="{x:Bind Followednum}" />
-                        <TextBlock Grid.Column="2" Text="Answernum" />
-                        <TextBlock x:Name="Answernum" Grid.Column="3" Text="{x:Bind Answerednum}" />
-                        <TextBlock Text="Followtime" Grid.Column="4" />
-                        <TextBlock x:Name="FollowTime" Grid.Column="5" Text="{x:Bind FollowQTime}" />
-                        <Button Grid.Column="6" x:Name="Follow" Content="unfollow" Background="White" Click="Follow_Click">
-                        </Button>
-                        <Button Grid.Column="7" x:Name="Answer" Content="Answer" Click="Answer_Click" Background="White" />
-                    </Grid>
-                </Grid>
-            </DataTemplate>
-        </ListView.ItemTemplate>
-    </ListView>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
 </Page>

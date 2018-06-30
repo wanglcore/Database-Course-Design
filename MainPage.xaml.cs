@@ -2,7 +2,9 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
+using System.Security.Cryptography;
 using Windows.UI.Xaml.Controls;
+using System.Text;
 
 // https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x804 上介绍了“空白页”项模板
 
@@ -21,12 +23,14 @@ namespace APP
         public MainPage()
         {
             this.InitializeComponent();
+            
         }
 
         private async void Login_Click(object sender, RoutedEventArgs e)
         {
             if (passwdbox.Password == "" || Account.Text == "")
             {
+
                 if (Account.Text == "")
                 {
                     Acconterror.Visibility = Visibility.Visible;
@@ -40,10 +44,17 @@ namespace APP
             }
             else
             {
-
+                MD5 mD5 = MD5.Create();
+                byte[] inputbyte = System.Text.Encoding.UTF8.GetBytes(passwdbox.Password);
+                byte[] hashpasswd = mD5.ComputeHash(inputbyte);
+                StringBuilder stringBuilder = new StringBuilder();
+                for(int i = 0; i < hashpasswd.Length; i++)
+                {
+                    stringBuilder.Append(hashpasswd[i].ToString("X2"));
+                }
                 Model.People people = new Model.People
                 {
-                    Passwd = passwdbox.Password,
+                    Passwd = stringBuilder.ToString(),
                     Email = Account.Text,
                 };
                 await IsValidUser(people.Email, people.Passwd);
@@ -81,7 +92,7 @@ namespace APP
                         Emails = Email,
                         id = isvalid
                     };
-                    this.Frame.Navigate(typeof(View.HomePage), myStruct);
+                    this.Frame.Navigate(typeof(View.HomePage),myStruct);
                 }
                 else
                 {

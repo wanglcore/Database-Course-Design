@@ -1,21 +1,12 @@
-﻿using System;
+﻿using APP.Model;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using APP.Model;
-using System.Threading.Tasks;
-using System.Net.Http;
-using Newtonsoft.Json;
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
 namespace APP.View
@@ -26,10 +17,9 @@ namespace APP.View
     public sealed partial class HomePage : Page
     {
         public static HomePage Current;
-        List<Qusition> qusitions;
-        MyStruct myStruct;
-        public string UserEmail;
-        public string Userid;
+        private List<Qusition> qusitions;
+        public MyStruct myStruct;
+        public People people;
         public HomePage()
         {
             this.InitializeComponent();
@@ -39,26 +29,23 @@ namespace APP.View
         /// 接受从登陆界面的传值
         /// </summary>
         /// <param name="e"></param>
+        /// 
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            base.OnNavigatingFrom(e);
+        }
+
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
+            if (e.Parameter is MyStruct)
+            {
+                myStruct = (MyStruct)e.Parameter;
+                await GetUserQusition(myStruct);
+                await Getinfo(myStruct.id);
+            }
             base.OnNavigatedTo(e);
-            myStruct = (MyStruct)e.Parameter;
-            await GetUserQusition(myStruct);
         }
 
-        private void Autobox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
-        {
-            string text = args.QueryText;
-            if (args.ChosenSuggestion != null)
-            {
-
-            }
-            else
-            {
-                //TODO根据用户的输入进行查询,此处更新数据库的查询
-                Suggestionlist.Navigate(typeof(View.SearchlistPage));
-            }
-        }
         /// <summary>
         /// 导航栏
         /// </summary>
@@ -73,14 +60,12 @@ namespace APP.View
             }
             else
             {
-
-                //TODO实现
                 switch (args.InvokedItem)
                 {
                     case "Account":
                         ContentViewFrame.Navigate(typeof(MyInfor), myStruct);
                         break;
-                    case "Home":
+                    case "Home":                        
                         this.Frame.Navigate(typeof(HomePage), myStruct);
                         break;
                     case "Qusition":
@@ -92,6 +77,15 @@ namespace APP.View
                     case "Answer":
                         Homesuggestion.Navigate(typeof(Qusitionviewpage), myStruct);
                         break;
+                    case "Artical":
+                        Homesuggestion.Navigate(typeof(SearchlistArtical));
+                        break;
+                    case "Draft":
+                        ContentViewFrame.Navigate(typeof(MyDraft));
+                        break;
+                    case "Notice":
+                        ContentViewFrame.Navigate(typeof(Notice));
+                        break;
                     default:
                         break;
                 }
@@ -100,37 +94,8 @@ namespace APP.View
         private void ItemListview_ItemClick(object sender, ItemClickEventArgs e)
         {
             var clickeditem = (Qusition)e.ClickedItem;
-
-            Dictionary<string, string> keyValues = new Dictionary<string, string>
-            {
-                { "QusitionTitle", clickeditem.QusitionTitle },
-                { "QusitionContent", clickeditem.QusitionContent },
-                { "Follownum", clickeditem.Followednum.ToString() },
-                { "Answernum", clickeditem.Answerednum.ToString() },
-                { "Qusitionid", clickeditem.Qusitionid.ToString() },
-                { "Userid", myStruct.id.ToString() }
-            };
-            ContentViewFrame.Navigate(typeof(AnswerQusition), keyValues);
+            ContentViewFrame.Navigate(typeof(AnswerQusition), clickeditem);
         }
-        private void HomeFrameView_SizeChanged(object sender, Windows.UI.Xaml.SizeChangedEventArgs e)
-        {
-            double width = Windows.UI.Xaml.Window.Current.Bounds.Width;
-            double height = Windows.UI.Xaml.Window.Current.Bounds.Height;
-            if (height > width)
-            {
-                Homesuggestion.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            }
-            else
-            {
-                Homesuggestion.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            }
-        }
-
-        private void VisualStateGroup_CurrentStateChanged(object sender, Windows.UI.Xaml.VisualStateChangedEventArgs e)
-        {
-
-        }
-
         /// <summary>
         /// 搜索按钮
         /// </summary>
@@ -138,7 +103,7 @@ namespace APP.View
         /// <param name="e"></param>
         private void SearchButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            Homesuggestion.Navigate(typeof(SearchlistPage), myStruct);
+            Homesuggestion.Navigate(typeof(SearchlistPage));
         }
         /// <summary>
         /// 刷新
@@ -150,7 +115,7 @@ namespace APP.View
             await GetUserQusition(myStruct);
         }
 
-        public async Task GetUserQusition(MyStruct myStruct)
+        private async Task GetUserQusition(MyStruct myStruct)
         {
             HttpClient httpClient = new HttpClient
             {
@@ -169,15 +134,36 @@ namespace APP.View
                     itemListview.ItemsSource = qusitions;
                 }
             }
-
         }
 
-        private void Follow_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async Task Getinfo(int Userid)
         {
-
+            HttpClient httpClient = new HttpClient
+            {
+                BaseAddress = new Uri("http://localhost:60671/")
+            };
+            httpClient.DefaultRequestHeaders.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            string str = $"api/values/userinfor/{Userid}";
+            HttpResponseMessage httpResponseMessage = await httpClient.GetAsync(str);
+            if (httpResponseMessage.IsSuccessStatusCode)
+            {
+                var success = await httpResponseMessage.Content.ReadAsAsync<People>();
+                if (success != null)
+                {
+                    people = success;
+                }
+            }
         }
 
-        private void More_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void Label0_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            string labelname = button.Content.ToString();
+            ContentViewFrame.Navigate(typeof(LabelDetail), labelname);
+        }
+
+        private void itemListview_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
         }

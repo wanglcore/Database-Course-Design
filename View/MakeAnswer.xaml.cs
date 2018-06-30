@@ -1,21 +1,17 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
+
+using APP.Model;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.Storage.Pickers;
+using Windows.Storage;
+using Windows.UI;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -28,24 +24,46 @@ namespace APP.View
     {
 
         Dictionary<string, int> keys;
-        int Qusitionid;
-        int Userid;
+        People people = HomePage.Current.people;
+        Qusition qusition;
+        Answershow answershow;
+        AnswerDraft answerDraft=null;
+        int Userid=HomePage.Current.myStruct.id;
+        
         public MakeAnswer()
         {
             this.InitializeComponent();
         }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            keys = (Dictionary<string, int>)e.Parameter;
-            Qusitionid = keys["Qusitionid"];
-            Userid = keys["Userid"];
+            if(e.Parameter is Qusition)
+            {
+                qusition = (Qusition)e.Parameter;
+            }
+            else if(e.Parameter is AnswerDraft)
+            {
+                answerDraft = (AnswerDraft)e.Parameter;
+                MyAnswer.Text = answerDraft.Content;
+            }
         }
-
+        /// <summary>
+        /// 答案的提交
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void SubAnswer_Click(object sender, RoutedEventArgs e)
         {
-            //TODO 回答问题
-            await ContentDialogshow();
+            if (MyAnswer.Text == "")
+            {
+                MyAnswer.PlaceholderForeground =new Windows.UI.Xaml.Media.SolidColorBrush( Colors.Red);
+                MyAnswer.PlaceholderText = "没有输入内容";
+            }
+            else
+            {
+                await ContentDialogshow();
+            }
         }
         private async Task SubAnswers(Model.Answer answer)
         {
@@ -59,13 +77,45 @@ namespace APP.View
                 var res = await httpResponseMessage.Content.ReadAsAsync<bool>();
                 if (res == true)
                 {
-                    issucc.Text = "Success";
-                    AnswerQusition.Current.Answernum.Text = (Convert.ToInt32(AnswerQusition.Current.Answernum.Text) + 1).ToString();
-                    AnswerQusition.Current.UpdateAns.Visibility = Visibility.Visible;
+                    SubAnswer.Content = "已回答";
+                    SubAnswer.IsEnabled = false ;
+                    CancelAnswer.IsEnabled = false;
+                    AnswerQusition.Current.qusition.Answerednum++;
+                    answershow = new Answershow
+                    {
+                        Qusitionid = answer.Qusitionid,
+                        Userid = answer.Userid,
+                        AnswerContent = answer.AnswerContent,
+                        AnswerTime = answer.AnswerTime,
+                        UpAnsTime = answer.UpAnsTime,
+                        UpAnsnum = answer.UpAnsnum,
+                        DownAnsnum = answer.DownAnsnum,
+                        AnsCmtnum = answer.AnsCmtnum,
+                        Name = people.Name,
+                        QName = qusition.QusitionTitle
+                    };
+                    AnswerQusition.Current.answers.Add(answershow);
+                    Frame.GoBack();
                 }
                 else
                 {
-                    issucc.Text = "Failure";
+                    
+                }
+            }
+        }
+        private async Task SubUPAnswer(Model.Answer answer)
+        {
+            HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("applocation/json"));
+            var content = new StringContent(JsonConvert.SerializeObject(answer), Encoding.UTF8, "application/json");
+            HttpResponseMessage httpResponseMessage = await httpClient.PostAsync("http://localhost:60671/api/answer/Updateanswer", content);
+            if (httpResponseMessage.IsSuccessStatusCode)
+            {
+                var res = await httpResponseMessage.Content.ReadAsAsync<bool>();
+                if (res == true)
+                {
+                    Frame.Navigate(typeof(AnswerQusition),answer.Qusitionid);
                 }
             }
         }
@@ -79,21 +129,109 @@ namespace APP.View
             };
             contentDialog.PrimaryButtonClick += async (_s, _e) =>
             {
+                Answer answer;
                 string answertext = MyAnswer.Text;
-                Model.Answer answer = new Model.Answer
+                int Qusitionid = 0;
+                if (answerDraft == null)
                 {
-                    Userid = Userid,
-                    Qusitionid = Qusitionid,
-                    AnswerContent = MyAnswer.Text
-                };
+                    answer = new Model.Answer
+                    {
+                        Userid = Userid,
+                        Qusitionid = qusition.Qusitionid,
+                        AnswerContent =answertext,
+                    };
+                    Qusitionid = qusition.Qusitionid;
+                }
+                else
+                {
+                    answer = new Answer
+                    {
+                        Userid = people.UserId,
+                        Qusitionid = answerDraft.Qid,
+                        AnswerContent = answertext,
+                    };
+                    Qusitionid = answerDraft.Qid;
+                }
                 answer.UpAnsTime = answer.AnswerTime = DateTime.Now;
-                await SubAnswers(answer);
+                var temp = await GetisAnswer(Userid, Qusitionid);
+                if (temp == true)
+                {
+                    await SubUPAnswer(answer);
+                }
+                else
+                {
+                    await SubAnswers(answer);
+                }
             };
             contentDialog.SecondaryButtonClick += (_s, _e) =>
             {
-                issucc.Text = "已取消";
+                
             };
             await contentDialog.ShowAsync();
+        }
+
+        private async void CancelAnswer_Click(object sender, RoutedEventArgs e)
+        {
+            await ContentDialog();
+        }
+        private async Task ContentDialog()
+        {
+            ContentDialog contentDialog = new ContentDialog
+            {
+                Title = "回答未提交,是否保存?",
+                PrimaryButtonText = "保存并退出",
+                SecondaryButtonText = "直接退出"
+            };
+            contentDialog.PrimaryButtonClick +=  (_s, _e) =>
+            {
+                string str = $"Q---{DateTime.Now}---{qusition.QusitionTitle}---{qusition.Qusitionid}---{MyAnswer.Text}---{people.UserId}";
+                Frame.Navigate(typeof(MyDraft), str);
+            };
+            contentDialog.SecondaryButtonClick += (_s, _e) =>
+            {
+                if (Frame.CanGoBack)
+                {
+                    Frame.GoBack();
+                }
+            };
+            await contentDialog.ShowAsync();
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            if (Frame.CanGoBack)
+            {
+                Frame.GoBack();
+            }
+        }
+
+        private void SaveAnswer_Click(object sender, RoutedEventArgs e)
+        {
+            string str = $"Q---{DateTime.Now}---{qusition.QusitionTitle}---{qusition.Qusitionid}---{MyAnswer.Text}---{people.UserId}";
+            Frame.Navigate(typeof(MyDraft), str);
+        }
+
+
+
+        private async Task<bool> GetisAnswer(int Userid, int Qusitionid)
+        {
+            HttpClient httpClient = new HttpClient
+            {
+                BaseAddress = new Uri("http://localhost:60671/")
+            };
+            httpClient.DefaultRequestHeaders.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            string str = $"api/answer/getisanswer/{Userid}/{Qusitionid}";
+            HttpResponseMessage httpResponseMessage = await httpClient.GetAsync(str);
+            if (httpResponseMessage.IsSuccessStatusCode)
+            {
+                var res = await httpResponseMessage.Content.ReadAsAsync<bool>();
+                return res;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

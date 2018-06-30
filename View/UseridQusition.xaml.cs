@@ -27,22 +27,30 @@ namespace APP.View
     public sealed partial class UseridQusition : Page
     {
         MyStruct myStruct;
-        List<Qusition> qusitions;
+        People people;
+        List<Qusition> qusitions=new List<Qusition>();
         public UseridQusition()
         {
             this.InitializeComponent();
         }
         private void UserQusition_ItemClick(object sender, ItemClickEventArgs e)
         {
-
+            Qusition qusition = (Qusition)e.ClickedItem;
+            Frame.Navigate(typeof(AnswerQusition), qusition);
         }
+
+
+
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
+           if(e.Parameter is People)
+            {
+                people = (People)e.Parameter;
+                await GetUserQusition(people);
+            }
             base.OnNavigatedTo(e);
-            myStruct = (MyStruct)e.Parameter;
-            await GetUserQusition(myStruct);
         }
-        public async Task GetUserQusition(MyStruct myStruct)
+        public async Task GetUserQusition(People people)
         {
             HttpClient httpClient = new HttpClient
             {
@@ -50,7 +58,7 @@ namespace APP.View
             };
             httpClient.DefaultRequestHeaders.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-            string str = $"api/qusition/{myStruct.id}";
+            string str = $"api/qusition/userqusition/{people.UserId}";
             HttpResponseMessage httpResponseMessage = await httpClient.GetAsync(str);
             if (httpResponseMessage.IsSuccessStatusCode)
             {
@@ -62,9 +70,16 @@ namespace APP.View
                 }
             }
         }
-        private void Follow_Click(object sender, RoutedEventArgs e)
+        private void Label0_Click(object sender, RoutedEventArgs e)
         {
+            Button button = (Button)sender;
+            string labelname = button.Content.ToString();
+            this.Frame.Navigate(typeof(LabelDetail), labelname);
+        }
 
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.GoBack();
         }
     }
 }
